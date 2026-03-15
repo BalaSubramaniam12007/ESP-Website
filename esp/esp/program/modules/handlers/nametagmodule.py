@@ -227,6 +227,7 @@ class NameTagModule(ProgramModuleObj):
         context['users_and_backs'] = users_and_backs
         context['group_name'] = Tag.getTag('full_group_name') or '%s %s' % (settings.INSTITUTION_NAME, settings.ORGANIZATION_SHORT_NAME)
         context['phone_number'] = Tag.getTag('group_phone_number')
+        context['current_logo_version'] = Tag.getTag('current_logo_version')
 
         return render_to_response(self.baseDir()+'ids.html', request, context)
 
