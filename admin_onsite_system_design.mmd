@@ -1,0 +1,74 @@
+flowchart LR
+    subgraph SYS["Live Dashboard Refresh and Write Flow"]
+        A["Admin mobile device<br>opens Admin On-site Webapp"] --> B["AdminOnsite web client"]
+        B L_B_C_0@--> C["Initial async request<br>GET /onsite/&lt;program&gt;/snapshot/"]
+        B L_B_D_0@--> D["Polling cycle<br>every 30 seconds"]
+        B --> P["Admin action"]
+
+        C --> E["Snapshot endpoint"]
+        D L_D_E_0@--> E
+        D --> N["Compare with previous payload"]
+        D --> T["Poll failure"]
+
+        E --> F["Snapshot helper<br>build current program state"]
+        F --> G["Existing program data sources"]
+        G --> H["Sections / registration state"]
+        G --> I["Teachers / moderators / attendance signals"]
+        G --> J["Capacity / room / timeslot data"]
+        H --> K["Single snapshot payload<br>JSON response"]
+        I --> K
+        J --> K
+        K --> L["Client receives latest snapshot"]
+        L --> M["Initial render or Live refresh"]
+        N --> O["Update only changed rows"]
+
+        P --> P1["Close registration<br>adjust cap<br>change setting"]
+        P1 L_P_Q_0@--> Q["Write endpoint"]
+        Q --> R["Existing registration / capacity logic"]
+        R --> S["Immediate re-fetch of affected state"]
+        S --> K
+
+        T --> U["Stale state<br>last known data kept visible"]
+        T --> W["Repeated failure"]
+        U --> V["Write actions locked"]
+        W --> X["Disconnected state"]
+        X --> Y["Retry or reconnect"]
+        Y L_Y_C_0@--> C
+    end
+
+     A:::client
+     B:::client
+     C:::server
+     D:::server
+     P:::client
+     P1:::client
+     E:::server
+     N:::client
+     T:::state
+     F:::server
+     G:::data
+     H:::data
+     I:::data
+     J:::data
+     K:::data
+     L:::client
+     M:::client
+     O:::client
+     Q:::server
+     R:::data
+     S:::server
+     U:::state
+     W:::state
+     V:::state
+     X:::state
+     Y:::server
+    classDef client fill:#e8f1ff,stroke:#4a78c2,stroke-width:1.5px,color:#111
+    classDef server fill:#eaf7ea,stroke:#4b8f4b,stroke-width:1.5px,color:#111
+    classDef data fill:#fff5e6,stroke:#d28b26,stroke-width:1.5px,color:#111
+    classDef state fill:#fdeaea,stroke:#c94f4f,stroke-width:1.5px,color:#111
+
+    L_B_C_0@{ animation: fast } 
+    L_B_D_0@{ animation: slow } 
+    L_D_E_0@{ animation: slow } 
+    L_P_Q_0@{ animation: fast }
+    L_Y_C_0@{ animation: slow }

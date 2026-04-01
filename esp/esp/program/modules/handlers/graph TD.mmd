@@ -1,0 +1,19 @@
+graph TD
+  AB[Admin browser\ntablet/phone] --> AW
+  SB[Student browser] --> SW
+  TB[Teacher browser] --> TW
+  DB[Admin desktop browser] --> DA
+
+  AW["adminonsite\n(NEW · webapp theme)"]
+  SW["studentonsite\n(existing)"]
+  TW["teacheronsite\n(existing)"]
+  DA["Desktop admin\n(untouched)"]
+
+  AW --> EP
+  SW --> EP
+  TW --> EP
+
+  EP["AJAX poll endpoint\n/adminonsite/snapshot/?since=ts"]
+  EP --> SL
+  SL["services/onsite_data.py\nget_program_onsite_snapshot()"]
+  SL --> ORM["Django ORM / Database\nClassSection · OnSiteAttendance · AJAXChangeLogEntry"]
